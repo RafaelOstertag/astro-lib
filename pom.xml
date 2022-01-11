@@ -12,22 +12,25 @@
     <name>Astronomy Library</name>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
+        <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <kotlin.version>1.6.10</kotlin.version>
-        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-        <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
-        <junit-jupiter.version>5.8.2</junit-jupiter.version>
+
         <assertk-jvm.version>0.25</assertk-jvm.version>
+        <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <kotlin-csv.version>1.2.0</kotlin-csv.version>
-        <slf4j.version>1.7.32</slf4j.version>
-        <logback.version>1.2.10</logback.version>
         <kotlinx-coroutines.version>1.6.0</kotlinx-coroutines.version>
+        <logback.version>1.2.10</logback.version>
+        <slf4j.version>1.7.32</slf4j.version>
+
+        <dependency-check-maven.version>6.0.4</dependency-check-maven.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+        <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
     </properties>
 
     <repositories>
@@ -168,4 +171,43 @@
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <repository>
+            <id>astro-maven</id>
+            <name>Astro Maven Repository</name>
+            <url>https://colossus.kruemel.home/nexus/repository/astro/</url>
+        </repository>
+    </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>security-scan</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>${dependency-check-maven.version}</version>
+                        <configuration>
+                            <formats>
+                                <format>HTML</format>
+                                <format>XML</format>
+                            </formats>
+                            <suppressionFiles>
+                                <suppressionFile>dependency-check-suppression.xml</suppressionFile>
+                            </suppressionFiles>
+                            <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
