@@ -9,7 +9,7 @@ import kotlin.math.pow
 
 private const val DAYS_TO_J2000 = 2_451_545.0
 
-internal fun OffsetDateTime.toGST(): Time {
+fun OffsetDateTime.toGST(): Time {
     // Based on https://thecynster.home.blog/2019/11/04/calculating-sidereal-time/ retrieved on 2022-01-05
     val ut = this.atZoneSameInstant(ZoneId.of("GMT"))
     val zeroHourGMTSameDate = ZonedDateTime.of(ut.toLocalDate(), LocalTime.of(0, 0, 0, 0), ZoneId.of("GMT"))
@@ -40,7 +40,7 @@ internal fun OffsetDateTime.toGST(): Time {
     return Time.of(gmstNormalized)
 }
 
-internal fun gstToLst(gst: Time, geographicCoordinates: GeographicCoordinates): Time {
+fun gstToLST(gst: Time, geographicCoordinates: GeographicCoordinates): Time {
     val gstDecimalHours = gst.toDecimalHours()
     val longitudeHours = geographicCoordinates.longitude.asDecimal() / DEGREES_PER_HOUR
     val lst = gstDecimalHours + longitudeHours

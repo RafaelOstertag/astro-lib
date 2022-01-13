@@ -41,7 +41,7 @@ sealed class HoursMinutesSeconds(val hours: Int, val minutes: Int, val seconds: 
 
 private fun <T : HoursMinutesSeconds> fromDecimal(
     decimalHour: Double,
-    factory: (hour: Int, minute: Int, second: Double) -> T
+    factory: (hour: Int, minute: Int, second: Double) -> T,
 ): T {
     if (decimalHour < 0.0 || decimalHour >= 24.0) {
         throw IllegalArgumentException("Decimal hour must be greater than or equal to 0.0 and less than 24.0")
@@ -70,7 +70,7 @@ class HourAngle(hour: Int, minute: Int, second: Double) : HoursMinutesSeconds(ho
      */
     fun toRightAscension(observerDateTime: OffsetDateTime, observerCoordinates: GeographicCoordinates): RightAscension {
         val gst = observerDateTime.toGST()
-        val lst = gstToLst(gst, observerCoordinates)
+        val lst = gstToLST(gst, observerCoordinates)
         val hourAngleDecimal = toDecimalHours()
         val rightAscensionDecimalNonNormalized = lst.toDecimalHours() - hourAngleDecimal
         return RightAscension.of(if (rightAscensionDecimalNonNormalized < 0) rightAscensionDecimalNonNormalized + 24.0 else rightAscensionDecimalNonNormalized)
@@ -91,7 +91,7 @@ class RightAscension(hour: Int, minute: Int, second: Double) : HoursMinutesSecon
      */
     fun toHourAngle(observerDateTime: OffsetDateTime, observerCoordinates: GeographicCoordinates): HourAngle {
         val gst = observerDateTime.toGST()
-        val lst = gstToLst(gst, observerCoordinates)
+        val lst = gstToLST(gst, observerCoordinates)
         val rightAscensionDecimal = toDecimalHours()
         val hourAngleDecimalNonNormalized = lst.toDecimalHours() - rightAscensionDecimal
         return HourAngle.of(if (hourAngleDecimalNonNormalized < 0) hourAngleDecimalNonNormalized + 24.0 else hourAngleDecimalNonNormalized)

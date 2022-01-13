@@ -23,14 +23,14 @@ internal class SiderealTimeTest {
     @Test
     fun shouldCalculateLST() {
         val gst = Time(4, 40, 5.23)
-        val lst = gstToLst(gst, GeographicCoordinates(Angle(0, 0, 0.0), Angle(-64, 0, 0.0)))
+        val lst = gstToLST(gst, GeographicCoordinates(Angle(0, 0, 0.0), Angle(-64, 0, 0.0)))
 
         assertThat(lst.hours).isEqualTo(0)
         assertThat(lst.minutes).isEqualTo(24)
         assertThat(lst.seconds).isCloseTo(5.23, MAX_DELTA)
 
         val gst1 = Time(8, 6, 45.8655332206644)
-        val lst1 = gstToLst(gst1, GeographicCoordinates(Angle(0, 0, 0.0), Angle(-81, 23, 0.0)))
+        val lst1 = gstToLST(gst1, GeographicCoordinates(Angle(0, 0, 0.0), Angle(-81, 23, 0.0)))
         assertThat(lst1.toDecimalHours()).isCloseTo(2.687184, MAX_DELTA)
     }
 }
