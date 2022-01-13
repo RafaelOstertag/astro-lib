@@ -18,7 +18,7 @@ sealed class HoursMinutesSeconds(val hours: Int, val minutes: Int, val seconds: 
     fun asLocalTime(): LocalTime =
         LocalTime.of(hours, minutes, seconds.toInt(), (seconds.getFractionalPart() * NANO_SECONDS_PER_SECOND).toInt())
 
-    override fun toString(): String = "%02d:%02d:%#06.3f".format(hours, minutes, seconds)
+    override fun toString(): String = "%02d:%02d:%#05.2f".format(hours, minutes, seconds)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
