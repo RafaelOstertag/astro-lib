@@ -79,13 +79,13 @@ internal class HoursMinutesSecondsTest {
     @Test
     fun `should convert to decimal hours`() {
         val time = Time(12, 30, 2.0)
-        assertThat(time.toDecimalHours()).isCloseTo(12.500555, MAX_DELTA)
+        assertThat(time.asDecimal()).isCloseTo(12.500555, MAX_DELTA)
 
         val hourAngle = HourAngle(12, 30, 2.0)
-        assertThat(hourAngle.toDecimalHours()).isCloseTo(12.500555, MAX_DELTA)
+        assertThat(hourAngle.asDecimal()).isCloseTo(12.500555, MAX_DELTA)
 
         val rightAscension = RightAscension(12, 30, 2.0)
-        assertThat(rightAscension.toDecimalHours()).isCloseTo(12.500555, MAX_DELTA)
+        assertThat(rightAscension.asDecimal()).isCloseTo(12.500555, MAX_DELTA)
     }
 
     @Test
@@ -137,7 +137,7 @@ internal class HoursMinutesSecondsTest {
         val ra = RightAscension(18, 32, 21.0)
         val hourAngle = ra.toHourAngle(observerDateTime, observerHorizontalCoordinates)
 
-        assertThat(hourAngle.toDecimalHours()).isCloseTo(HourAngle(9, 52, 23.659425575076).toDecimalHours(), MAX_DELTA)
+        assertThat(hourAngle.asDecimal()).isCloseTo(HourAngle(9, 52, 23.659425575076).asDecimal(), MAX_DELTA)
     }
 
     @Test
@@ -149,8 +149,8 @@ internal class HoursMinutesSecondsTest {
         val hourAngle = HourAngle(9, 52, 23.66)
         val rightAscension = hourAngle.toRightAscension(observerDateTime, observerHorizontalCoordinates)
 
-        assertThat(rightAscension.toDecimalHours()).isCloseTo(
-            RightAscension(18, 32, 20.999425575076803).toDecimalHours(),
+        assertThat(rightAscension.asDecimal()).isCloseTo(
+            RightAscension(18, 32, 20.999425575076803).asDecimal(),
             MAX_DELTA
         )
     }

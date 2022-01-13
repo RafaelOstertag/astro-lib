@@ -1,5 +1,7 @@
 package ch.guengel.astro.coordinates
 
+import ch.guengel.astro.time.gstToLST
+import ch.guengel.astro.time.toGST
 import java.time.LocalTime
 import java.time.OffsetDateTime
 
@@ -10,7 +12,7 @@ sealed class HoursMinutesSeconds(val hours: Int, val minutes: Int, val seconds: 
         require(seconds >= 0.0 && seconds < 60.0) { "Seconds must be greater than or equal to 0.0 and less than 60.0" }
     }
 
-    fun toDecimalHours(): Double = hours +
+    fun asDecimal(): Double = hours +
             ((minutes + (seconds / SECONDS_PER_MINUTE)) / MINUTES_PER_HOUR)
 
     fun asLocalTime(): LocalTime =
@@ -53,7 +55,7 @@ private fun <T : HoursMinutesSeconds> fromDecimal(
 }
 
 class Time(hour: Int, minute: Int, second: Double) : HoursMinutesSeconds(hour, minute, second) {
-    fun toAngle(): Angle = Angle.of(toDecimalHours() * DEGREES_PER_HOUR)
+    fun toAngle(): Angle = Angle.of(asDecimal() * DEGREES_PER_HOUR)
 
     companion object {
         fun of(decimalHour: Double): Time = fromDecimal(decimalHour, ::Time)
@@ -71,8 +73,8 @@ class HourAngle(hour: Int, minute: Int, second: Double) : HoursMinutesSeconds(ho
     fun toRightAscension(observerDateTime: OffsetDateTime, observerCoordinates: GeographicCoordinates): RightAscension {
         val gst = observerDateTime.toGST()
         val lst = gstToLST(gst, observerCoordinates)
-        val hourAngleDecimal = toDecimalHours()
-        val rightAscensionDecimalNonNormalized = lst.toDecimalHours() - hourAngleDecimal
+        val hourAngleDecimal = asDecimal()
+        val rightAscensionDecimalNonNormalized = lst.asDecimal() - hourAngleDecimal
         return RightAscension.of(if (rightAscensionDecimalNonNormalized < 0) rightAscensionDecimalNonNormalized + 24.0 else rightAscensionDecimalNonNormalized)
     }
 
@@ -92,8 +94,8 @@ class RightAscension(hour: Int, minute: Int, second: Double) : HoursMinutesSecon
     fun toHourAngle(observerDateTime: OffsetDateTime, observerCoordinates: GeographicCoordinates): HourAngle {
         val gst = observerDateTime.toGST()
         val lst = gstToLST(gst, observerCoordinates)
-        val rightAscensionDecimal = toDecimalHours()
-        val hourAngleDecimalNonNormalized = lst.toDecimalHours() - rightAscensionDecimal
+        val rightAscensionDecimal = asDecimal()
+        val hourAngleDecimalNonNormalized = lst.asDecimal() - rightAscensionDecimal
         return HourAngle.of(if (hourAngleDecimalNonNormalized < 0) hourAngleDecimalNonNormalized + 24.0 else hourAngleDecimalNonNormalized)
     }
 
