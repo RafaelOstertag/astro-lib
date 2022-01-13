@@ -55,10 +55,10 @@ internal class AngleTest {
 
     @Test
     fun `should correctly convert to string`() {
-        assertThat(Angle(1, 1, 1.00005).toString()).isEqualTo("+001°01'01.0001\"")
-        assertThat(Angle(1, 1, 0.0).toString()).isEqualTo("+001°01'00.0000\"")
-        assertThat(Angle(-1, 1, 0.0).toString()).isEqualTo("-001°01'00.0000\"")
-        assertThat(Angle(-359, 59, 59.0001).toString()).isEqualTo("-359°59'59.0001\"")
+        assertThat(Angle(1, 1, 1.005).toString()).isEqualTo("+001°01'01.01\"")
+        assertThat(Angle(1, 1, 0.0).toString()).isEqualTo("+001°01'00.00\"")
+        assertThat(Angle(-1, 1, 0.0).toString()).isEqualTo("-001°01'00.00\"")
+        assertThat(Angle(-359, 59, 59.01).toString()).isEqualTo("-359°59'59.01\"")
     }
 
 

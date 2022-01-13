@@ -32,7 +32,7 @@ data class Angle(val degrees: Int, val arcMinutes: Int, val arcSeconds: Double) 
         return 0
     }
 
-    override fun toString(): String = "%+04d°%02d'%#07.4f\"".format(degrees, arcMinutes, arcSeconds)
+    override fun toString(): String = "%+04d°%02d'%#05.2f\"".format(degrees, arcMinutes, arcSeconds)
 
     companion object {
         fun of(decimalDegrees: Double): Angle {

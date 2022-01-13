@@ -157,8 +157,8 @@ internal class HoursMinutesSecondsTest {
 
     @Test
     fun `should convert to string`() {
-        assertThat(Time(10, 11, 12.0005).toString()).isEqualTo("10:11:12.001")
-        assertThat(HourAngle(10, 11, 12.13).toString()).isEqualTo("10:11:12.130")
-        assertThat(RightAscension(10, 11, 12.13).toString()).isEqualTo("10:11:12.130")
+        assertThat(Time(10, 11, 12.005).toString()).isEqualTo("10:11:12.01")
+        assertThat(HourAngle(10, 11, 12.1).toString()).isEqualTo("10:11:12.10")
+        assertThat(RightAscension(10, 11, 12.1).toString()).isEqualTo("10:11:12.10")
     }
 }
