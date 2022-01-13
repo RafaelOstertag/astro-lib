@@ -1,4 +1,4 @@
-package ch.guengel.astro.coordinates
+package ch.guengel.astro.time
 
 import java.time.OffsetDateTime
 import java.time.ZoneOffset

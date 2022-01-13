@@ -3,16 +3,9 @@ package ch.guengel.astro.coordinates
 import assertk.assertThat
 import assertk.assertions.isCloseTo
 import org.junit.jupiter.api.Test
-import java.time.LocalTime
 import kotlin.math.PI
 
 internal class UtilsKtTest {
-    @Test
-    fun shouldConvertToDecimalHours() {
-        val decimalHours = LocalTime.of(18, 31, 27).toDecimalHours()
-
-        assertThat(decimalHours).isCloseTo(18.524167, MAX_DELTA)
-    }
 
     @Test
     fun shouldGetFractionalPart() {

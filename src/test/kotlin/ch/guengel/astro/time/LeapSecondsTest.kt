@@ -1,4 +1,4 @@
-package ch.guengel.astro.coordinates
+package ch.guengel.astro.time
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo

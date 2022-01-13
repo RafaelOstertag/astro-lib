@@ -10,10 +10,10 @@ data class EquatorialCoordinates(val rightAscension: RightAscension, val declina
 
 fun EquatorialCoordinates.toHorizonCoordinates(
     observerCoordinates: GeographicCoordinates,
-    observerDateTime: OffsetDateTime
+    observerDateTime: OffsetDateTime,
 ): HorizontalCoordinates {
     val hourAngleInRadians =
-        (this.rightAscension.toHourAngle(observerDateTime, observerCoordinates).toDecimalHours() * DEGREES_PER_HOUR)
+        (this.rightAscension.toHourAngle(observerDateTime, observerCoordinates).asDecimal() * DEGREES_PER_HOUR)
             .toRadians()
     val declinationInRadians = declination.asDecimal().toRadians()
     val latitudeInRadians = observerCoordinates.latitude.asDecimal().toRadians()

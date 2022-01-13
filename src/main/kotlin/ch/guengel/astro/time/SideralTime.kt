@@ -1,23 +1,14 @@
-package ch.guengel.astro.coordinates
+package ch.guengel.astro.time
 
-import java.time.LocalTime
+import ch.guengel.astro.coordinates.*
 import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.temporal.JulianFields
 import kotlin.math.pow
-
-private const val DAYS_TO_J2000 = 2_451_545.0
 
 fun OffsetDateTime.toGST(): Time {
     // Based on https://thecynster.home.blog/2019/11/04/calculating-sidereal-time/ retrieved on 2022-01-05
-    val ut = this.atZoneSameInstant(ZoneId.of("GMT"))
-    val zeroHourGMTSameDate = ZonedDateTime.of(ut.toLocalDate(), LocalTime.of(0, 0, 0, 0), ZoneId.of("GMT"))
-    val julianDateUTC = (zeroHourGMTSameDate.getLong(JulianFields.JULIAN_DAY) - 0.5)
-    val julianDateTimeUTC = julianDateUTC + (ut.toLocalTime().toDecimalHours() / 24.0)
-    val julianDateTimeTT = julianDateUTC +
-            (ut.toLocalTime()
-                .toDecimalHours() + ((LeapSeconds.forDateTime(ut.toOffsetDateTime()) + 32.184) / 3_600.0)) / 24
+    val ut = toUT()
+    val julianDateTimeUTC = ut.toJulianDateTimeUTC()
+    val julianDateTimeTT = ut.toJulianDateTimeTT()
 
     val Du = julianDateTimeUTC - DAYS_TO_J2000
     val thetaOfDu = TWO_PI * (0.7790572732640 + 1.00273781191135448 * Du)
@@ -41,7 +32,7 @@ fun OffsetDateTime.toGST(): Time {
 }
 
 fun gstToLST(gst: Time, geographicCoordinates: GeographicCoordinates): Time {
-    val gstDecimalHours = gst.toDecimalHours()
+    val gstDecimalHours = gst.asDecimal()
     val longitudeHours = geographicCoordinates.longitude.asDecimal() / DEGREES_PER_HOUR
     val lst = gstDecimalHours + longitudeHours
     val lstNormalized = lst.mod(24.0)
