@@ -63,7 +63,7 @@ data class Entry(
     // notes about object exported from NED
     val nedNotes: String? = null,
     // notes about the object data from OpenNGC catalog
-    val openNGCNotes: String? = null
+    val openNGCNotes: String? = null,
 ) {
     val name: String get() = catalogName.name + number
     fun isMessier() = messier != null
@@ -72,6 +72,6 @@ data class Entry(
 data class ExtendedEntry(
     val entry: Entry,
     val horizontalCoordinates: HorizontalCoordinates,
-    val dateTime: OffsetDateTime,
-    val geographicCoordinates: GeographicCoordinates
+    val observerDateTime: OffsetDateTime,
+    val observerCoordinates: GeographicCoordinates,
 )

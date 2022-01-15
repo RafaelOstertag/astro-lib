@@ -13,29 +13,56 @@ class Catalog(val entries: List<Entry>) {
     fun find(block: (Entry) -> Boolean): List<Entry> = entries.filter(block)
 
     fun findExtendedEntries(
-        geographicCoordinates: GeographicCoordinates,
-        dateTime: OffsetDateTime,
-        predicate: (ExtendedEntry) -> Boolean
+        observerCoordinates: GeographicCoordinates,
+        observerDateTime: OffsetDateTime,
+        predicate: (ExtendedEntry) -> Boolean,
     ): List<ExtendedEntry> = runBlocking {
         entries
             .chunked(chunkSize)
-            .map {
+            .map { entrySubList ->
                 async(threadPoolContext) {
-                    it.filter { it.equatorialCoordinates != null }
-                        .map {
-                            ExtendedEntry(
-                                it,
-                                it.equatorialCoordinates!!.toHorizonCoordinates(geographicCoordinates, dateTime),
-                                dateTime,
-                                geographicCoordinates
-                            )
-                        }
+                    enrichEntryList(observerCoordinates, observerDateTime, entrySubList)
                         .filter(predicate)
                 }
             }
             .awaitAll()
             .flatten()
     }
+
+    private fun enrichEntryList(
+        observerCoordinates: GeographicCoordinates,
+        observerDateTime: OffsetDateTime,
+        entryList: List<Entry>,
+    ) = entryList.filter { it.equatorialCoordinates != null }
+        .map { entry ->
+            ExtendedEntry(
+                entry,
+                entry.equatorialCoordinates!!.toHorizonCoordinates(observerCoordinates,
+                    observerDateTime),
+                observerDateTime,
+                observerCoordinates
+            )
+        }
+
+    fun extendEntries(
+        observerCoordinates: GeographicCoordinates,
+        observerDateTime: OffsetDateTime,
+        entryList: List<Entry>,
+    ): List<ExtendedEntry> = if (entryList.size > 1_000) {
+        runBlocking {
+            entryList
+                .chunked(chunkSize)
+                .map { entrySubList ->
+                    async(threadPoolContext) {
+                        enrichEntryList(observerCoordinates, observerDateTime, entrySubList)
+                    }
+                }.awaitAll()
+                .flatten()
+        }
+    } else {
+        enrichEntryList(observerCoordinates, observerDateTime, entryList)
+    }
+
 
     @OptIn(DelicateCoroutinesApi::class)
     private companion object {
