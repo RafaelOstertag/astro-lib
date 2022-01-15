@@ -35,34 +35,54 @@ internal class CatalogTest {
     @RepeatedTest(10)
     fun `should find extended entries`() {
         val observerCoordinates = GeographicCoordinates(Angle(47, 32, 53.0), Angle(8, 50, 7.0))
-        val dateTime = OffsetDateTime.of(2022, 1, 7, 20, 0, 0, 0, ZoneOffset.ofHours(1))
+        val observerDateTime = OffsetDateTime.of(2022, 1, 7, 20, 0, 0, 0, ZoneOffset.ofHours(1))
 
         var t0 = System.nanoTime()
-        var result = catalog.findExtendedEntries(observerCoordinates, dateTime) {
+        var result = catalog.findExtendedEntries(observerCoordinates, observerDateTime) {
             (it.entry.vMag?.compareTo(3.0) ?: 0) < 0
         }
         logger.info("Took {} ms to get {} results", (System.nanoTime() - t0) / 1_000_000, result.size)
 
         assertThat(result).hasSize(6)
         result.forEach {
-            assertThat(it.dateTime).isEqualTo(dateTime)
-            assertThat(it.geographicCoordinates).isEqualTo(observerCoordinates)
+            assertThat(it.observerDateTime).isEqualTo(observerDateTime)
+            assertThat(it.observerCoordinates).isEqualTo(observerCoordinates)
         }
 
         t0 = System.nanoTime()
-        result = catalog.findExtendedEntries(observerCoordinates, dateTime) { true }
+        result = catalog.findExtendedEntries(observerCoordinates, observerDateTime) { true }
         logger.info("Took {} ms to get {} results", (System.nanoTime() - t0) / 1_000_000, result.size)
 
         assertThat(result).hasSize(NUMBER_OF_OPENNGC_ENTRIES_WITH_COORDINATES)
         result.forEach {
-            assertThat(it.dateTime).isEqualTo(dateTime)
-            assertThat(it.geographicCoordinates).isEqualTo(observerCoordinates)
+            assertThat(it.observerDateTime).isEqualTo(observerDateTime)
+            assertThat(it.observerCoordinates).isEqualTo(observerCoordinates)
         }
 
         t0 = System.nanoTime()
-        result = catalog.findExtendedEntries(observerCoordinates, dateTime) { false }
+        result = catalog.findExtendedEntries(observerCoordinates, observerDateTime) { false }
         logger.info("Took {} ms to get {} results", (System.nanoTime() - t0) / 1_000_000, result.size)
 
         assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `should enrich items`() {
+        val observerCoordinates = GeographicCoordinates(Angle(47, 32, 53.0), Angle(8, 50, 7.0))
+        val observerDateTime = OffsetDateTime.of(2022, 1, 7, 20, 0, 0, 0, ZoneOffset.ofHours(1))
+
+        var extendedList = catalog.extendEntries(observerCoordinates, observerDateTime, catalog.entries.subList(0, 10))
+        assertThat(extendedList).hasSize(10)
+        extendedList.forEach {
+            assertThat(it.observerDateTime).isEqualTo(observerDateTime)
+            assertThat(it.observerCoordinates).isEqualTo(observerCoordinates)
+        }
+
+        extendedList = catalog.extendEntries(observerCoordinates, observerDateTime, catalog.entries.subList(0, 2000))
+        assertThat(extendedList).hasSize(1997)
+        extendedList.forEach {
+            assertThat(it.observerDateTime).isEqualTo(observerDateTime)
+            assertThat(it.observerCoordinates).isEqualTo(observerCoordinates)
+        }
     }
 }
