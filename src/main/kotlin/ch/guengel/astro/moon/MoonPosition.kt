@@ -35,11 +35,44 @@ object MoonPosition {
         val meanAnomalySun = SunPosition.meanAnomaly(julianDaysSinceJ2000)
         val sunEclipticLongitude = SunPosition.eclipticLongitude(meanAnomalySun)
 
+        val trueEclipticLongitude = trueEclipticLongitude(julianDaysSinceJ2000, meanAnomalySun, sunEclipticLongitude)
+
+        // Moon's mean ecliptic longitude of the ascending node
+        val omegaDeg = (omegaZeroDeg - 0.0529539 * julianDaysSinceJ2000).mod(360.0)
+
+        // Moon's corrected ecliptic longitude of the ascending node
+        val omegaPrime = omegaDeg - 0.16 * sin(meanAnomalySun * RADIANS_PER_DEGREE)
+
+        val y = sin((trueEclipticLongitude - omegaPrime) * RADIANS_PER_DEGREE) * cos(iota_rad)
+        val x = cos((trueEclipticLongitude - omegaPrime) * RADIANS_PER_DEGREE)
+
+        val moonEclipticLongitude = (omegaPrime + arcTanCorrectedDeg(x, y)).mod(360.0)
+        val moonEclipticLatitude =
+            asin(sin((trueEclipticLongitude - omegaPrime) * RADIANS_PER_DEGREE) * sin(iota_rad)) * DEGREES_PER_RADIAN
+
+        val epsilonInRad = obliquityOfEclipticInRad(julianDaysSinceJ2000)
+
+        val moonEclipticLongitudeInRad = moonEclipticLongitude * RADIANS_PER_DEGREE
+        val moonEclipticLatitudeInRad = moonEclipticLatitude * RADIANS_PER_DEGREE
+        val sinDeclination =
+            sin(moonEclipticLatitudeInRad) * cos(epsilonInRad) + cos(moonEclipticLatitudeInRad) * sin(epsilonInRad) * sin(
+                moonEclipticLongitudeInRad)
+
+        val declination = Angle.of(asin(sinDeclination) * DEGREES_PER_RADIAN)
+
+        val rightAscension = RightAscension.of(arcTanCorrectedDeg(cos(moonEclipticLongitudeInRad),
+            sin(moonEclipticLongitudeInRad) * cos(epsilonInRad) - tan(moonEclipticLatitudeInRad) * sin(epsilonInRad)) / DEGREES_PER_HOUR)
+
+        return EquatorialCoordinates(rightAscension, declination)
+    }
+
+    internal fun trueEclipticLongitude(
+        julianDaysSinceJ2000: Double,
+        meanAnomalySun: Double,
+        sunEclipticLongitude: Double,
+    ): Double {
         // Moon's mean ecliptic longitude
         val moonMeanEclipticLongitudeDeg = (13.176339686 * julianDaysSinceJ2000 + gammaZeroDeg).mod(360.0)
-
-        // Moon's mean excliptic longitude of the ascending node
-        val omegaDeg = (omegaZeroDeg - 0.0529539 * julianDaysSinceJ2000).mod(360.0)
 
         // Moon's mean anomaly
         val meanAnomalyMoon =
@@ -70,31 +103,6 @@ object MoonPosition {
             0.6583 * sin((2 * (correctedMeanEclipticLongitude - sunEclipticLongitude)) * RADIANS_PER_DEGREE)
 
         // Moon's true ecliptic longitude
-        val trueEclipticLongitude = correctedMeanEclipticLongitude + variationCorrection
-
-        // Moon's corrected ecliptic longitude of the ascending node
-        val omegaPrime = omegaDeg - 0.16 * sin(meanAnomalySun * RADIANS_PER_DEGREE)
-
-        val y = sin((trueEclipticLongitude - omegaPrime) * RADIANS_PER_DEGREE) * cos(iota_rad)
-        val x = cos((trueEclipticLongitude - omegaPrime) * RADIANS_PER_DEGREE)
-
-        val moonEclipticLongitude = (omegaPrime + arcTanCorrectedDeg(x, y)).mod(360.0)
-        val moonEclipticLatitude =
-            asin(sin((trueEclipticLongitude - omegaPrime) * RADIANS_PER_DEGREE) * sin(iota_rad)) * DEGREES_PER_RADIAN
-
-        val epsilonInRad = obliquityOfEclipticInRad(julianDaysSinceJ2000)
-
-        val moonEclipticLongitudeInRad = moonEclipticLongitude * RADIANS_PER_DEGREE
-        val moonEclipticLatitudeInRad = moonEclipticLatitude * RADIANS_PER_DEGREE
-        val sinDeclination =
-            sin(moonEclipticLatitudeInRad) * cos(epsilonInRad) + cos(moonEclipticLatitudeInRad) * sin(epsilonInRad) * sin(
-                moonEclipticLongitudeInRad)
-
-        val declination = Angle.of(asin(sinDeclination) * DEGREES_PER_RADIAN)
-
-        val rightAscension = RightAscension.of(arcTanCorrectedDeg(cos(moonEclipticLongitudeInRad),
-            sin(moonEclipticLongitudeInRad) * cos(epsilonInRad) - tan(moonEclipticLatitudeInRad) * sin(epsilonInRad)) / DEGREES_PER_HOUR)
-
-        return EquatorialCoordinates(rightAscension, declination)
+        return correctedMeanEclipticLongitude + variationCorrection
     }
 }
