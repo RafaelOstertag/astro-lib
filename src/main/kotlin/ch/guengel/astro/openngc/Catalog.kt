@@ -2,13 +2,21 @@ package ch.guengel.astro.openngc
 
 import ch.guengel.astro.coordinates.GeographicCoordinates
 import ch.guengel.astro.coordinates.toHorizonCoordinates
-import kotlinx.coroutines.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.newFixedThreadPoolContext
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import java.time.OffsetDateTime
 import kotlin.math.ceil
 
 class Catalog(val entries: List<Entry>) {
     private val chunkSize by lazy { ceil(entries.size.toDouble() / numberOfThreads).toInt() }
+
+    val size: Int
+        get() = entries.size
 
     fun find(block: (Entry) -> Boolean): List<Entry> = entries.filter(block)
 
@@ -62,7 +70,6 @@ class Catalog(val entries: List<Entry>) {
     } else {
         enrichEntryList(observerCoordinates, observerDateTime, entryList)
     }
-
 
     @OptIn(DelicateCoroutinesApi::class)
     private companion object {
