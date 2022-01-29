@@ -8,7 +8,7 @@ import kotlin.math.sin
 
 data class EquatorialCoordinates(val rightAscension: RightAscension, val declination: Angle)
 
-fun EquatorialCoordinates.toHorizonCoordinates(
+fun EquatorialCoordinates.toHorizontalCoordinates(
     observerCoordinates: GeographicCoordinates,
     observerDateTime: OffsetDateTime,
 ): HorizontalCoordinates {

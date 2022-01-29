@@ -1,7 +1,7 @@
 package ch.guengel.astro.openngc
 
 import ch.guengel.astro.coordinates.GeographicCoordinates
-import ch.guengel.astro.coordinates.toHorizonCoordinates
+import ch.guengel.astro.coordinates.toHorizontalCoordinates
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.async
@@ -45,7 +45,7 @@ class Catalog(val entries: List<Entry>) {
         .map { entry ->
             ExtendedEntry(
                 entry,
-                entry.equatorialCoordinates!!.toHorizonCoordinates(observerCoordinates,
+                entry.equatorialCoordinates!!.toHorizontalCoordinates(observerCoordinates,
                     observerDateTime),
                 observerDateTime,
                 observerCoordinates
