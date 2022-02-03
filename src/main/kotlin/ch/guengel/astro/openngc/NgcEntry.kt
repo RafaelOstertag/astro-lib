@@ -5,9 +5,8 @@ import ch.guengel.astro.coordinates.GeographicCoordinates
 import ch.guengel.astro.coordinates.HorizontalCoordinates
 import java.time.OffsetDateTime
 
-data class Entry(
-    val catalogName: CatalogName,
-    val number: String,
+data class NgcEntry(
+    val id: NgcEntryId,
     val objectType: ObjectType,
     val equatorialCoordinates: EquatorialCoordinates? = null,
     // Constellation where the object is located
@@ -65,12 +64,12 @@ data class Entry(
     // notes about the object data from OpenNGC catalog
     val openNGCNotes: String? = null,
 ) {
-    val name: String get() = catalogName.name + number
+    val name: String get() = id.toString()
     fun isMessier() = messier != null
 }
 
-data class ExtendedEntry(
-    val entry: Entry,
+data class ExtendedNgcEntry(
+    val ngcEntry: NgcEntry,
     val horizontalCoordinates: HorizontalCoordinates,
     val observerDateTime: OffsetDateTime,
     val observerCoordinates: GeographicCoordinates,

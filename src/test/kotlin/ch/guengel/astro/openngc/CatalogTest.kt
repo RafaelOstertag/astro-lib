@@ -39,7 +39,7 @@ internal class CatalogTest {
 
         var t0 = System.nanoTime()
         var result = catalog.findExtendedEntries(observerCoordinates, observerDateTime) {
-            (it.entry.vMag?.compareTo(3.0) ?: 0) < 0
+            (it.ngcEntry.vMag?.compareTo(3.0) ?: 0) < 0
         }
         logger.info("Took {} ms to get {} results", (System.nanoTime() - t0) / 1_000_000, result.size)
 

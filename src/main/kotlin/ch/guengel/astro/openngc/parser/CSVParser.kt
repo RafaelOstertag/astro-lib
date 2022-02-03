@@ -1,7 +1,11 @@
 package ch.guengel.astro.openngc.parser
 
 import ch.guengel.astro.coordinates.EquatorialCoordinates
-import ch.guengel.astro.openngc.*
+import ch.guengel.astro.openngc.Catalog
+import ch.guengel.astro.openngc.Constellation
+import ch.guengel.astro.openngc.NgcEntry
+import ch.guengel.astro.openngc.ObjectType
+import ch.guengel.astro.openngc.ParserError
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -10,7 +14,7 @@ object CSVParser {
     private val logger = LoggerFactory.getLogger(CSVParser::class.java)
 
     fun parse(file: File): Catalog {
-        val list = mutableListOf<Entry>()
+        val list = mutableListOf<NgcEntry>()
         var lineNumber = 2
 
         csvReader {
@@ -20,9 +24,8 @@ object CSVParser {
         }.open(file) {
             readAllWithHeaderAsSequence().forEach { row ->
                 try {
-                    val catalogName =
-                        NameParser.parseCatalog(row["Name"] ?: throw ParserError("'Name' not found in line"))
-                    val number = NameParser.parseNumber(row["Name"] ?: throw ParserError("'Name' not found in line"))
+                    val id =
+                        NameParser.parseName(row["Name"] ?: throw ParserError("'Name' not found in line"))
                     val objectType =
                         ObjectType.findByAbbrev(row["Type"] ?: throw ParserError("'Type' not found in line"))
 
@@ -42,9 +45,8 @@ object CSVParser {
                         row["Const"].takeIf { !it.isNullOrBlank() }?.let { Constellation.findByAbbrev(it) }
 
                     list.add(
-                        Entry(
-                            catalogName = catalogName,
-                            number = number,
+                        NgcEntry(
+                            id = id,
                             objectType = objectType,
                             equatorialCoordinates = equatorialCoordinates,
                             constellation = constellation,
