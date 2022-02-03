@@ -12,19 +12,19 @@ import org.slf4j.LoggerFactory
 import java.time.OffsetDateTime
 import kotlin.math.ceil
 
-class Catalog(val entries: List<Entry>) {
+class Catalog(val entries: List<NgcEntry>) {
     private val chunkSize by lazy { ceil(entries.size.toDouble() / numberOfThreads).toInt() }
 
     val size: Int
         get() = entries.size
 
-    fun find(block: (Entry) -> Boolean): List<Entry> = entries.filter(block)
+    fun find(block: (NgcEntry) -> Boolean): List<NgcEntry> = entries.filter(block)
 
     fun findExtendedEntries(
         observerCoordinates: GeographicCoordinates,
         observerDateTime: OffsetDateTime,
-        predicate: (ExtendedEntry) -> Boolean,
-    ): List<ExtendedEntry> = runBlocking {
+        predicate: (ExtendedNgcEntry) -> Boolean,
+    ): List<ExtendedNgcEntry> = runBlocking {
         entries
             .chunked(chunkSize)
             .map { entrySubList ->
@@ -40,10 +40,10 @@ class Catalog(val entries: List<Entry>) {
     private fun enrichEntryList(
         observerCoordinates: GeographicCoordinates,
         observerDateTime: OffsetDateTime,
-        entryList: List<Entry>,
-    ) = entryList.filter { it.equatorialCoordinates != null }
+        ngcEntryList: List<NgcEntry>,
+    ) = ngcEntryList.filter { it.equatorialCoordinates != null }
         .map { entry ->
-            ExtendedEntry(
+            ExtendedNgcEntry(
                 entry,
                 entry.equatorialCoordinates!!.toHorizontalCoordinates(observerCoordinates,
                     observerDateTime),
@@ -55,10 +55,10 @@ class Catalog(val entries: List<Entry>) {
     fun extendEntries(
         observerCoordinates: GeographicCoordinates,
         observerDateTime: OffsetDateTime,
-        entryList: List<Entry>,
-    ): List<ExtendedEntry> = if (entryList.size > 1_000) {
+        ngcEntryList: List<NgcEntry>,
+    ): List<ExtendedNgcEntry> = if (ngcEntryList.size > 1_000) {
         runBlocking {
-            entryList
+            ngcEntryList
                 .chunked(chunkSize)
                 .map { entrySubList ->
                     async(threadPoolContext) {
@@ -68,7 +68,7 @@ class Catalog(val entries: List<Entry>) {
                 .flatten()
         }
     } else {
-        enrichEntryList(observerCoordinates, observerDateTime, entryList)
+        enrichEntryList(observerCoordinates, observerDateTime, ngcEntryList)
     }
 
     @OptIn(DelicateCoroutinesApi::class)

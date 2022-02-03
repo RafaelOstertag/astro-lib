@@ -1,7 +1,12 @@
 package ch.guengel.astro.coordinates
 
 import assertk.assertThat
-import assertk.assertions.*
+import assertk.assertions.hasClass
+import assertk.assertions.hasHashCode
+import assertk.assertions.isCloseTo
+import assertk.assertions.isEqualTo
+import assertk.assertions.isFailure
+import assertk.assertions.isSuccess
 import org.junit.jupiter.api.Test
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -160,5 +165,12 @@ internal class HoursMinutesSecondsTest {
         assertThat(Time(10, 11, 12.005).toString()).isEqualTo("10:11:12.01")
         assertThat(HourAngle(10, 11, 12.1).toString()).isEqualTo("10:11:12.10")
         assertThat(RightAscension(10, 11, 12.1).toString()).isEqualTo("10:11:12.10")
+    }
+
+    @Test
+    fun `hashcode should work`() {
+        assertThat(Time(10, 11, 12.005)).hasHashCode(Time(10, 11, 12.005).hashCode())
+        assertThat(HourAngle(10, 11, 12.1)).hasHashCode(HourAngle(10, 11, 12.1).hashCode())
+        assertThat(RightAscension(10, 11, 12.1)).hasHashCode(RightAscension(10, 11, 12.1).hashCode())
     }
 }

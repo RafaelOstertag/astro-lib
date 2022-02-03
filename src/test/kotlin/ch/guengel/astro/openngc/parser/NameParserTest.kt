@@ -5,29 +5,23 @@ import assertk.assertions.hasClass
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
 import ch.guengel.astro.openngc.CatalogName
+import ch.guengel.astro.openngc.NgcEntryId
 import ch.guengel.astro.openngc.ParserError
 import org.junit.jupiter.api.Test
 
 internal class NameParserTest {
 
     @Test
-    fun `should parse catalog`() {
-        assertThat(NameParser.parseCatalog("IC0080 NED01")).isEqualTo(CatalogName.IC)
-        assertThat(NameParser.parseCatalog("IC0080")).isEqualTo(CatalogName.IC)
-        assertThat(NameParser.parseCatalog("NGC0414 NED01")).isEqualTo(CatalogName.NGC)
-        assertThat(NameParser.parseCatalog("NGC0414")).isEqualTo(CatalogName.NGC)
+    fun `should parse name`() {
+        val idWithAuxDesignation = NameParser.parseName("IC0080 NED01")
+        assertThat(idWithAuxDesignation).isEqualTo(NgcEntryId(CatalogName.IC, "0080", "NED01"))
+
+        val simpleId = NameParser.parseName("NGC71021")
+        assertThat(simpleId).isEqualTo(NgcEntryId(CatalogName.NGC, "71021"))
     }
 
     @Test
     fun `should throw error on parsing error`() {
-        assertThat { NameParser.parseCatalog("xyz") }.isFailure().hasClass(ParserError::class)
-    }
-
-    @Test
-    fun `should parse number`() {
-        assertThat(NameParser.parseNumber("IC0080 NED01")).isEqualTo("0080")
-        assertThat(NameParser.parseNumber("IC0080")).isEqualTo("0080")
-        assertThat(NameParser.parseNumber("NGC0414 NED01")).isEqualTo("0414")
-        assertThat(NameParser.parseNumber("NGC0414")).isEqualTo("0414")
+        assertThat { NameParser.parseName("xyz") }.isFailure().hasClass(ParserError::class)
     }
 }
