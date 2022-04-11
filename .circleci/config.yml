@@ -1,0 +1,102 @@
+version: 2.1
+
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/openjdk:11.0
+    resource_class: medium
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v1-{{ .Branch }}-
+            - maven-repo-v1-
+      - run:
+          name: Build & Test
+          command: mvn -B clean verify
+      - persist_to_workspace:
+          root: target
+          paths:
+            - .
+      - save_cache:
+          key: maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+          paths:
+            - ~/.m2
+
+  sonar:
+    docker:
+      - image: cimg/openjdk:11.0
+    resource_class: medium
+    steps:
+      - checkout
+      - attach_workspace:
+          at: target
+      - run:
+          name: Run Sonar
+          command: mvn -B sonar:sonar -Dsonar.projectKey=ch.guengel.astro:astro-lib -Dsonar.qualitygate.wait=true
+
+  check-dependencies:
+    docker:
+      - image: cimg/openjdk:11.0
+    resource_class: medium
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - maven-repo-v1-dependency-check-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v1-dependency-check-{{ .Branch }}-
+            - maven-repo-v1-dependency-check-
+      - run:
+          name: Check Dependencies Astro Server
+          command: mvn -B -Psecurity-scan dependency-check:check
+      - save_cache:
+          key: maven-repo-v1-dependency-check-{{ .Branch }}-{{ checksum "pom.xml" }}
+          paths:
+            - ~/.m2
+
+  deploy-maven-artifact:
+    docker:
+      - image: cimg/openjdk:11.0
+    resource_class: medium
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - maven-repo-v1-dependency-check-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v1-dependency-check-{{ .Branch }}-
+            - maven-repo-v1-dependency-check-
+      - run:
+          name: Deploy to Maven Repository
+          command: mvn -s .circleci/settings.xml -B -DskipTests deploy
+
+workflows:
+  version: 2
+  build-any-branch:
+    jobs:
+      - build-and-test
+      - check-dependencies
+      - sonar:
+          context:
+            - sonar
+          requires:
+            - build-and-test
+      - deploy-maven-artifact:
+          requires:
+            - sonar
+            - check-dependencies
+          context:
+            - maven-context
+
+  daily-dependency-check:
+    triggers:
+      - schedule:
+          cron: "21 4 * * *"
+          filters:
+            branches:
+              only:
+                - master
+                - develop
+
+    jobs:
+      - check-dependencies
