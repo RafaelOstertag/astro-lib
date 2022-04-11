@@ -41,8 +41,9 @@
 
     <repositories>
         <repository>
-            <id>mavenCentral</id>
-            <url>https://repo1.maven.org/maven2/</url>
+            <id>rafaelostertag.jfrog.io</id>
+            <name>maven</name>
+            <url>https://rafaelostertag.jfrog.io/artifactory/maven</url>
         </repository>
     </repositories>
 
@@ -197,10 +198,15 @@
 
     <distributionManagement>
         <repository>
-            <id>astro-maven</id>
-            <name>Astro Maven Repository</name>
-            <url>https://colossus.kruemel.home/nexus/repository/astro/</url>
+            <id>rafaelostertag.jfrog.io</id>
+            <name>JFrog Release Repository</name>
+            <url>https://rafaelostertag.jfrog.io/artifactory/maven-release</url>
         </repository>
+        <snapshotRepository>
+            <id>rafaelostertag.jfrog.io</id>
+            <name>JFrog Snapshot Repository</name>
+            <url>https://rafaelostertag.jfrog.io/artifactory/maven-snapshot</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <profiles>
