@@ -91,7 +91,7 @@ workflows:
             - sonar
             - check-dependencies
           context:
-            - maven-context
+            - maven-repository-write
 
   daily-dependency-check:
     triggers:
