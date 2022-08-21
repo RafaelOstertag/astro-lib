@@ -18,19 +18,19 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <kotlin.version>1.6.10</kotlin.version>
+        <kotlin.version>1.7.10</kotlin.version>
 
         <assertk-jvm.version>0.25</assertk-jvm.version>
-        <junit-jupiter.version>5.8.2</junit-jupiter.version>
-        <kotlin-csv.version>1.2.0</kotlin-csv.version>
-        <kotlinx-coroutines.version>1.6.0</kotlinx-coroutines.version>
+        <junit-jupiter.version>5.9.0</junit-jupiter.version>
+        <kotlin-csv.version>1.6.0</kotlin-csv.version>
+        <kotlinx-coroutines.version>1.6.4</kotlinx-coroutines.version>
         <logback.version>1.2.10</logback.version>
-        <slf4j.version>1.7.32</slf4j.version>
+        <slf4j.version>2.0.0</slf4j.version>
 
-        <dependency-check-maven.version>7.1.0</dependency-check-maven.version>
+        <dependency-check-maven.version>7.1.2</dependency-check-maven.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
-        <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
-        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
 
         <!-- Sonar -->
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
