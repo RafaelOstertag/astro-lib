@@ -6,7 +6,7 @@
 
     <artifactId>astro-lib</artifactId>
     <groupId>ch.guengel.astro</groupId>
-    <version>6.0.2-SNAPSHOT</version>
+    <version>6.0.2</version>
     <packaging>jar</packaging>
 
     <name>Astronomy Library</name>
